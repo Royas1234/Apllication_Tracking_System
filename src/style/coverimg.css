@@ -1,0 +1,37 @@
+.ant-card {
+  margin-bottom: 60px !important;
+  box-shadow: 0px 1px 18px rgba(0, 0, 0, 0.12);
+}
+.ant-card .ant-card-head {
+  font-size: 19px !important;
+  font-weight: 700 !important;
+}
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 39px 19px 33px 0px;
+}
+.upload-button-container > .anticon {
+  font-size: 30px;
+  font-weight: 600;
+}
+.upload-texts p {
+  color: #979797;
+  font-size: 1em;
+}
+.upload-texts > .upload-image {
+  font-size: 13px;
+  font-weight: 700;
+  color: black;
+}
+.uploader > .ant-upload {
+  width: 100% !important;
+  height: 210px !important;
+  background-color: white !important;
+}
+.upload-button-container {
+  font-size: 14px;
+  text-align: center;
+}

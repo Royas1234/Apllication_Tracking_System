@@ -1,0 +1,35 @@
+.choice-field {
+  width: 100%;
+  margin-bottom: 13px;
+}
+
+.anticon-unordered-list {
+  font-weight: 900;
+  width: 16px;
+  height: 16px;
+}
+.anticon-plus {
+  font-weight: 900;
+  width: 16px;
+  height: 16px;
+}
+.Choice {
+  margin-top: 20px;
+}
+.choice-list {
+  padding-top: 5px;
+}
+.choice-list button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
+.ant-input {
+  height: 50px;
+}
+.type-choice {
+  padding-left: 25px;
+  color: black;
+  font-size: 1.1em;
+  font-weight: 500;
+}
