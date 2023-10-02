@@ -1,0 +1,59 @@
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 1.5em;
+  margin-top: 40px;
+}
+
+.home {
+  margin-top: 70px;
+}
+.list {
+  margin-top: 30px;
+}
+
+.header-list {
+  width: 100%;
+  height: 100%;
+  color: black;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+
+  font-size: 1.1em;
+}
+.program {
+  width: 22vw;
+  /* padding-left: 30px; */
+}
+.application,
+.program,
+.workflow,
+.preview {
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.workflow {
+  width: 20vw;
+  padding: 10px 0px;
+
+  border-right: 1px solid #c4c4c4;
+}
+.application {
+  width: 20vw;
+  background-color: #00635b;
+  color: white;
+}
+.preview {
+  width: 28vw;
+}
+.content-container {
+  width: 595px;
+  padding: 112px 20px 20px 70px;
+}

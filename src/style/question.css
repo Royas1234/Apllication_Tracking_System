@@ -1,0 +1,48 @@
+.question-container p {
+  color: black;
+  font-size: 1.1em;
+  font-weight: 600;
+  padding-bottom: 8px;
+  padding-top: 10px;
+}
+.ant-select-selector,
+.ant-input {
+  border: 1px solid black !important;
+}
+.ant-select .ant-select-arrow {
+  color: black !important;
+  font-weight: bold;
+}
+
+.footer-container {
+  justify-content: space-between;
+  padding: 49px 0 18px 0;
+}
+.max-choice {
+  margin-top: 35px;
+}
+.max-choice > .max-choice-text {
+  color: black;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.display-question {
+  border-bottom: 1px solid #c4c4c4;
+  padding: 22px 0px;
+}
+.question-type {
+  color: #979797;
+  font-size: 13px;
+  padding-bottom: 3px;
+}
+.edit-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.question {
+  font-weight: 700;
+  font-size: 1.1em;
+  word-wrap: break-word;
+}

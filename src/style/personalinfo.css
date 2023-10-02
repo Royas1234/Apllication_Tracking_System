@@ -1,0 +1,66 @@
+.personalInfo-box {
+  margin-top: 50px;
+  margin-left: -15px;
+  height: auto;
+}
+
+.personal-infos p {
+  color: black;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.ant-card-body {
+  padding-top: 0 !important;
+}
+.info-fields {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #c4c4c4;
+}
+
+.information-text {
+  width: 50%;
+}
+
+.checkbox-switch-container {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+.profile-check {
+  gap: 40px;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #087b2f !important;
+  border-color: #087b2f;
+}
+.ant-switch.ant-switch-checked {
+  background-color: #087b2f !important;
+}
+.dial-code {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.toggle-text {
+  color: #666666;
+  font-size: 12px;
+  padding-left: 10px;
+}
+
+.add-question {
+  padding-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.add-question p {
+  font-size: 12px;
+  font-weight: 700;
+}
+.ant-modal-content {
+  padding: 0 !important;
+}
