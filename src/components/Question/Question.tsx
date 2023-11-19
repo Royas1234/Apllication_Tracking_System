@@ -102,10 +102,7 @@ function Question({
           data-testid="selectedType"
           name="type"
           inputId="typea"
-          // style={{
-          //   width: '100%',
-          //   height: '50px',
-          // }}
+          className="select"
           value={type}
           onChange={handleChange}
           options={[
@@ -119,14 +116,11 @@ function Question({
             { value: 'FileUpload', label: 'FileUpload' },
           ]}
         />
-        {/* <div className="select">
-        </div> */}
 
         <div className="input-container">
           <p>Question</p>
           <Input
             placeholder="Type here"
-            // data-testid= 'input'
             value={questionValue}
             onChange={(e) => setQuestionValue(e.target.value)}
           />
