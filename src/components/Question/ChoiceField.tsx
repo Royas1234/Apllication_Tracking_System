@@ -7,34 +7,29 @@ const { Text } = Typography
 
 type ChoiceFieldProp = {
   updateChoiceField: any
-  values: any
+  choices: string[]
 }
 
-function ChoiceField({ updateChoiceField, values }: ChoiceFieldProp) {
-  const allChoices = Object.values(values)
-
+function ChoiceField({ updateChoiceField, choices }: ChoiceFieldProp) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    updateChoiceField({
-      ...values,
-      [index]: e.target.value,
-    })
+    const updatedChoicesState = [...choices]
+    updatedChoicesState[index] = e.target.value
+    updateChoiceField(updatedChoicesState)
   }
+
   const addNewChoice = () => {
-    updateChoiceField({
-      ...values,
-      [allChoices.length]: '',
-    })
+    updateChoiceField([...choices, ''])
   }
 
   return (
     <div className="Choice">
       <Text className="type type-choice">Choice</Text>
       <div className="choice-list">
-        {allChoices.map((value: any, index: number) => {
-          const isLastItem = allChoices.length - 1 === index
+        {choices.map((value: any, index: number) => {
+          const isLastItem = choices.length - 1 === index
           return (
             <div key={index} className="flex-container choice-field">
               <UnorderedListOutlined />

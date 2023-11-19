@@ -1,18 +1,21 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons'
 import { Card, message, Upload } from 'antd'
 import type { UploadChangeParam } from 'antd/es/upload'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import '../style/coverimg.css'
 
-function CoverImage() {
-  const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => callback(reader.result as string))
-    reader.readAsDataURL(img)
-  }
+type CallbackType = (url: string) => void
 
+const getBase64 = (img: RcFile, setImageUrlResult: CallbackType) => {
+  const reader = new FileReader()
+  reader.addEventListener('load', () =>
+    setImageUrlResult(reader.result as string)
+  )
+  reader.readAsDataURL(img)
+}
+
+function CoverImage() {
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
     if (!isJpgOrPng) {
@@ -26,27 +29,22 @@ function CoverImage() {
   }
 
   const [loading, setLoading] = useState(false)
-  const [imageUrl, setImageUrl] = useState<string>()
+  const [imageUrl, setImageUrl] = useState<string>('')
 
-  const handleChange: UploadProps['onChange'] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    if (info.file.status === 'uploading') {
-      setLoading(true)
-      return
-    }
-    if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj as RcFile, (url) => {
-        setLoading(false)
-        setImageUrl(url)
-      })
-    }
+  function setImageUrlResult(url: string) {
+    setLoading(false)
+    setImageUrl(url)
+  }
+
+  const handleChange = (info: UploadChangeParam<UploadFile>) => {
+    setLoading(true)
+    getBase64(info.file.originFileObj as RcFile, setImageUrlResult)
   }
   const uploadButton = (
     <div className="upload-button-container">
       {loading ? <LoadingOutlined /> : <UploadOutlined />}
       <div className="upload-texts" style={{ marginTop: 8 }}>
-        <p className="upload-image">Upload cover image</p>
+        <p className="upload-image">Upload</p>
         <p>16:9 ratio is recommended. Max image size 1mb</p>
       </div>
     </div>
@@ -62,7 +60,7 @@ function CoverImage() {
           listType="picture-card"
           className="uploader"
           showUploadList={false}
-          action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+          // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
           beforeUpload={beforeUpload}
           onChange={handleChange}
         >
