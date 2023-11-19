@@ -50,14 +50,6 @@ function Navbar() {
               borderBottom: 0,
               boxShadow: '0px 1px 18px rgba(0, 0, 0, 0.12)',
             }}
-            // size="large"
-            // renderTabBar={() => {
-            //   return (
-            //     <div>
-            //       <p>Application Form</p>
-            //     </div>
-            //   )
-            // }}
             items={[
               {
                 label: <TabBarItem label="Program Details" />,

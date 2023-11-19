@@ -1,26 +1,52 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Checkbox, Modal, Switch } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, EditOutlined } from '@ant-design/icons'
 import '../style/personalinfo.css'
 import Question from './Question/Question'
+import axios from 'axios'
 
-function PersonalInfo({ personalInformationFields }: any) {
+export type QuestionShape = {
+  id: string
+  type: string
+  choices: string[]
+  question: string
+  maxChoice: number
+  isEditing: boolean
+}
+export type noIdQuestionShape = {
+  type: string
+  question: string
+  isEditing: boolean
+}
+
+function PersonalInfo({
+  personalInformationFields,
+  saveApplicationInfoToServer,
+}: any) {
   const [toggleState, setToggleState] = useState(personalInformationFields)
-
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [displayQuestion, setDisplayQuestion] = useState(
+    personalInformationFields.personalQuestions
+  )
+  const [questionToEdit, setQuestionToEdit] = useState<QuestionShape | null>(
+    null
+  )
 
   useEffect(() => {
     setToggleState(personalInformationFields)
+    setDisplayQuestion(personalInformationFields.personalQuestions)
   }, [personalInformationFields])
 
   const handleToggle = (field, fieldOption) => {
-    setToggleState({
+    const changeToggleState = {
       ...toggleState,
       [field]: {
         ...toggleState[field],
         [fieldOption]: !toggleState[field][fieldOption],
       },
-    })
+    }
+    setToggleState(changeToggleState)
+    saveApplicationInfoToServer('personalInformation', changeToggleState)
   }
 
   const showModal = () => {
@@ -28,6 +54,64 @@ function PersonalInfo({ personalInformationFields }: any) {
   }
   const handleCancel = () => {
     setIsModalOpen(false)
+  }
+  const handleAfterClose = () => {
+    setQuestionToEdit(null)
+  }
+  const addNewQuestion = (newQuestion) => {
+    const updatedPersonalQuestions = [...displayQuestion, newQuestion]
+    const updatedPersonalInformation = {
+      ...toggleState,
+      personalQuestions: updatedPersonalQuestions,
+    }
+
+    setDisplayQuestion(updatedPersonalQuestions)
+    saveApplicationInfoToServer(
+      'personalInformation',
+      updatedPersonalInformation
+    )
+    handleCancel()
+  }
+
+  const handleEditQuestion = (question) => {
+    setQuestionToEdit(question)
+    showModal()
+  }
+
+  const editQuestion = (updatedQuestion) => {
+    const editedQuestions = displayQuestion.map((currentQuestion) => {
+      if (updatedQuestion.id === currentQuestion.id) {
+        return { ...currentQuestion, ...updatedQuestion }
+      } else {
+        return currentQuestion
+      }
+    })
+    const updatedPersonalInformationWithEditQuestion = {
+      ...toggleState,
+      personalQuestions: editedQuestions,
+    }
+    setDisplayQuestion(editedQuestions)
+    saveApplicationInfoToServer(
+      'personalInformation',
+      updatedPersonalInformationWithEditQuestion
+    )
+    handleCancel()
+  }
+  const deleteQuestion = (idToDelete) => {
+    const questionsAfterDelete = displayQuestion.filter((questionToDelete) => {
+      return questionToDelete.id !== idToDelete.id
+    })
+    const updatedPersonalInformationWithDelQuestion = {
+      ...toggleState,
+      personalQuestions: questionsAfterDelete,
+    }
+
+    setDisplayQuestion(questionsAfterDelete)
+    saveApplicationInfoToServer(
+      'personalInformation',
+      updatedPersonalInformationWithDelQuestion
+    )
+    handleCancel()
   }
 
   return (
@@ -37,10 +121,10 @@ function PersonalInfo({ personalInformationFields }: any) {
       headStyle={{ backgroundColor: '#d0f7fa' }}
     >
       <div className="info-fields">
-        <p>First Name</p>
+        <p title="firstName">First Name</p>
       </div>
       <div className="info-fields">
-        <p>Last Name</p>
+        <p data-testid="lastName">Last Name</p>
       </div>
       <div className="info-fields">
         <p>Email</p>
@@ -53,6 +137,7 @@ function PersonalInfo({ personalInformationFields }: any) {
         </div>
         <div className="checkbox-switch-container">
           <Checkbox
+            data-testid="firstCheckbox"
             checked={toggleState.phoneNumber.internalUse}
             onChange={() => handleToggle('phoneNumber', 'internalUse')}
           >
@@ -60,6 +145,7 @@ function PersonalInfo({ personalInformationFields }: any) {
           </Checkbox>
           <div className="switch">
             <Switch
+              data-testid="firstSwitch"
               checked={toggleState.phoneNumber.show}
               onChange={() => handleToggle('phoneNumber', 'show')}
             />
@@ -193,19 +279,51 @@ function PersonalInfo({ personalInformationFields }: any) {
           </div>
         </div>
       </div>
-      <div className="add-question" onClick={showModal}>
+      {displayQuestion.map((question, index) => (
+        <div
+          className="display-question"
+          key={index}
+          onClick={() => handleEditQuestion(question)}
+          data-testid="firstQuestionList"
+        >
+          <div className="question-type" data-testid="type">
+            {question.type}
+          </div>
+          <div className="edit-question flex-container">
+            <div className="question" data-testid="question">
+              {question.question}
+            </div>
+            <div>
+              <EditOutlined />
+            </div>
+          </div>
+        </div>
+      ))}
+      <div
+        className="add-question"
+        data-testid="addQuestion"
+        onClick={showModal}
+      >
         <PlusOutlined
           style={{ color: 'black', fontSize: '25px', fontWeight: 500 }}
         />
         <p>Add a question</p>
       </div>
+
       <Modal
         footer={null}
         style={{ padding: 0 }}
         open={isModalOpen}
+        afterClose={handleAfterClose}
         onCancel={handleCancel}
+        destroyOnClose
       >
-        <Question />
+        <Question
+          addNewQuestion={addNewQuestion}
+          questionToEdit={questionToEdit}
+          editQuestion={editQuestion}
+          deleteQuestion={deleteQuestion}
+        />
       </Modal>
     </Card>
   )

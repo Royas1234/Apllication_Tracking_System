@@ -4,77 +4,7 @@ import CoverImage from './CoverImage'
 import PersonalInfo from './PersonalInfo'
 import Profile from './Profile'
 import axios from 'axios'
-
-// type PersonalInformationFields = {
-//   firstName: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   lastName: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   emailId: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   phoneNumber: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   nationality: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   currentResidence: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   idNumber: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   dateOfBirth: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   gender: {
-//     internalUse: boolean
-//     show: boolean
-//   }
-//   personalQuestions: {
-//     id: string
-//     type: string
-//     question: string
-//     choices: string[]
-//     maxChoice: number
-//     disqualify: boolean
-//     other: boolean
-//   }[]
-// }
-// type profileFields = {
-//   education: {
-//     mandatory: boolean
-//     show: boolean
-//   }
-//   experience: {
-//     mandatory: boolean
-//     show: boolean
-//   }
-//   resume: {
-//     mandatory: boolean
-//     show: boolean
-//   }
-//   profileQuestions: {
-//     id: string
-//     type: string
-//     question: string
-//     choices: string[]
-//     maxChoice: number
-//     disqualify: boolean
-//     other: boolean
-//   }[]
-// }
+// const axios = require("axios")
 
 function ApplicationForm() {
   const [personalInfoData, setPersonalInfoData] = useState({
@@ -102,6 +32,7 @@ function ApplicationForm() {
       internalUse: false,
       show: false,
     },
+    personalQuestions: [],
   })
   const [profileData, setProfileData] = useState({
     education: {
@@ -116,7 +47,12 @@ function ApplicationForm() {
       mandatory: true,
       show: true,
     },
+    profileQuestions: [],
   })
+  const [dataId, setDataId] = useState('')
+  const [dataType, setDataType] = useState('applicationForm')
+  const [coverImage, setCoverImage] = useState('')
+  const [customisedQuestions, setCustomisedQuestions] = useState([])
 
   useEffect(() => {
     axios
@@ -126,14 +62,51 @@ function ApplicationForm() {
       .then((response) => {
         setPersonalInfoData(response.data.data.attributes.personalInformation)
         setProfileData(response.data.data.attributes.profile)
+        setCoverImage(response.data.data.attributes.coverImage)
+        setCustomisedQuestions(
+          response.data.data.attributes.customisedQuestions
+        )
+        setDataId(response.data.data.id)
+        setDataType(response.data.data.type)
       })
   }, [])
+  const saveApplicationInfoToServer = async (formAttributesKey, formValue) => {
+    const payload = {
+      data: {
+        id: dataId,
+        type: dataType,
+        attributes: {
+          coverImage,
+          personalInformation: personalInfoData,
+          profile: profileData,
+          customisedQuestions,
+          [formAttributesKey]: formValue,
+        },
+      },
+    }
+    try {
+      await axios.put(
+        'http://127.0.0.1:4010/api/483.94426793814927/programs/distinctio/application-form',
+        payload
+      )
+    } catch (error: any) {
+      if (error.response) {
+        console.error('Error saving toggle state:', error)
+      }
+    }
+  }
 
   return (
     <div className="content-container">
       <CoverImage />
-      <PersonalInfo personalInformationFields={personalInfoData} />
-      <Profile profileFields={profileData} />
+      <PersonalInfo
+        personalInformationFields={personalInfoData}
+        saveApplicationInfoToServer={saveApplicationInfoToServer}
+      />
+      <Profile
+        profileFields={profileData}
+        saveApplicationInfoToServer={saveApplicationInfoToServer}
+      />
     </div>
   )
 }

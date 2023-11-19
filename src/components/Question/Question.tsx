@@ -1,60 +1,86 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { Card, Select, Input, Typography, Button, Checkbox } from 'antd'
-import { CloseOutlined, EditOutlined } from '@ant-design/icons'
+import { Card, Input, Typography, Button, Checkbox } from 'antd'
+import Select, { SingleValue } from 'react-select'
+import { CloseOutlined } from '@ant-design/icons'
 import '../../style/question.css'
 import ChoiceField from './ChoiceField'
+import { QuestionShape } from '../PersonalInfo'
+import { v4 } from 'uuid'
 
 const { Text } = Typography
-interface QuestionItem {
-  id: number
-  type: string
-  inputQuestion: string
-  isEditing: boolean
+type QuestionProps = {
+  addNewQuestion: (newQuestion: QuestionShape) => void
+  questionToEdit: QuestionShape | null
+  deleteQuestion: (newQuestion: QuestionShape) => void
+  editQuestion: (newQuestion: QuestionShape) => void
 }
 
-function Question() {
-  const [questionValue, setQuestionValue] = useState('')
-  const [choices, setChoices] = useState({ 0: '' })
-  const [type, setType] = useState('')
-  const [displayQuestion, setDisplayQuestion] = useState<QuestionItem[]>([])
+type QuestionOption = {
+  label: string
+  value: string
+}
 
-  const handleChange = (value: string) => {
-    setType(value)
+function Question({
+  addNewQuestion,
+  questionToEdit,
+  editQuestion,
+  deleteQuestion,
+}: QuestionProps) {
+  const [questionValue, setQuestionValue] = useState(
+    questionToEdit?.question ?? ''
+  )
+  const [choices, setChoices] = useState([''])
+  const [type, setType] = useState<QuestionOption>({
+    label: questionToEdit?.type ?? '',
+    value: questionToEdit?.type ?? '',
+  })
+  const [maxChoice, setMaxChoice] = useState(0)
+
+  useEffect(() => {
+    if (questionToEdit) {
+      setQuestionValue(questionToEdit.question)
+      setChoices(questionToEdit.choices)
+      setMaxChoice(questionToEdit.maxChoice)
+    }
+  }, [questionToEdit])
+
+  const handleChange = (option: SingleValue<QuestionOption>) => {
+    if (option) {
+      setType(option)
+    }
   }
   const updateChoiceField = (values: any) => {
     setChoices(values)
   }
-
-  // const handleSave = () => {
-  //   if (questionValue) {
-  //     const newQuestions: any = [
-  //       ...displayQuestion,
-  //       { id: Math.random(), inputQuestion: questionValue, isEditing: false },
-  //     ]
-  //     setDisplayQuestion(newQuestions)
-  //     console.log(newQuestions)
-  //     setQuestionValue('')
-  //   }
-  // }
   const handleSave = () => {
-    if (questionValue) {
-      const newQuestion: QuestionItem = {
-        id: Math.random(),
-        type: type,
-        inputQuestion: questionValue,
-        isEditing: false,
-      }
-      setDisplayQuestion([...displayQuestion, newQuestion])
-      console.log(newQuestion)
-      setQuestionValue('')
+    const newQuestion: QuestionShape = {
+      id: questionToEdit?.id || v4(),
+      type: type.value,
+      choices,
+      maxChoice,
+      question: questionValue,
+      isEditing: false,
+    }
+    if (questionToEdit) {
+      editQuestion(newQuestion)
+    } else {
+      addNewQuestion(newQuestion)
     }
   }
-  const handleDelete = (idToDelete) => {
-    const updatedQuestions = displayQuestion.filter(
-      (delQuestion) => delQuestion.id !== idToDelete
-    )
-    setDisplayQuestion(updatedQuestions)
+
+  const handleDelete = () => {
+    const newQuestion: QuestionShape = {
+      id: questionToEdit?.id || v4(),
+      type: type.value,
+      choices,
+      maxChoice,
+      question: questionValue,
+      isEditing: false,
+    }
+    if (questionToEdit) {
+      deleteQuestion(newQuestion)
+    }
   }
 
   const handleSubmit = (e) => {
@@ -63,74 +89,76 @@ function Question() {
   }
   return (
     <Card title="Questions" headStyle={{ backgroundColor: '#d0f7fa' }}>
-      <form className="question-container" onSubmit={handleSubmit}>
-        <p className="type">Type</p>
-        <div className="select">
-          <Select
-            style={{
-              width: '100%',
-              height: '50px',
-            }}
-            value={type}
-            onChange={handleChange}
-            options={[
-              { value: 'Paragragh', label: 'Paragragh' },
-              { value: 'Short answer', label: 'Short answer' },
-              { value: 'Yes/No', label: 'Yes/No' },
-              { value: 'Dropdown', label: 'Dropdown' },
-              { value: 'Multiple Choice', label: 'Multiple Choice' },
-              { value: 'Date', label: 'Date' },
-              { value: 'Number', label: 'Number' },
-              { value: 'File upload', label: 'File upload' },
-              { value: 'Video question', label: 'Video question' },
-            ]}
-          />
-        </div>
-        {displayQuestion.map((question, index) => (
-          <div className="display-question" key={index}>
-            <div className="question-type">{type}</div>
-            <div className="edit-question flex-container">
-              <div className="question">{question.inputQuestion}</div>
-              <div>
-                <EditOutlined />
-              </div>
-            </div>
-          </div>
-        ))}
+      <form
+        role="form"
+        className="question-container"
+        data-testid="questionForm"
+        onSubmit={handleSubmit}
+      >
+        <label htmlFor="type" aria-labelledby="type" className="type">
+          Type
+        </label>
+        <Select
+          data-testid="selectedType"
+          name="type"
+          inputId="typea"
+          // style={{
+          //   width: '100%',
+          //   height: '50px',
+          // }}
+          value={type}
+          onChange={handleChange}
+          options={[
+            { value: 'Paragraph', label: 'Paragraph' },
+            { value: 'ShortAnswer', label: 'ShortAnswer' },
+            { value: 'YesNo', label: 'YesNo' },
+            { value: 'Dropdown', label: 'Dropdown' },
+            { value: 'MultipleChoice', label: 'MultipleChoice' },
+            { value: 'Date', label: 'Date' },
+            { value: 'Number', label: 'Number' },
+            { value: 'FileUpload', label: 'FileUpload' },
+          ]}
+        />
+        {/* <div className="select">
+        </div> */}
+
         <div className="input-container">
           <p>Question</p>
           <Input
             placeholder="Type here"
+            // data-testid= 'input'
             value={questionValue}
             onChange={(e) => setQuestionValue(e.target.value)}
           />
         </div>
 
-        {type === 'Multiple Choice' && (
+        {type.value === 'MultipleChoice' && (
           <div className="choice-option-container">
             <ChoiceField
               updateChoiceField={updateChoiceField}
-              values={choices}
+              choices={choices}
             />
             <div className="max-choice">
               <Text className="max-choice-text">Max choice allowed</Text>
               <Input
-                onChange={(e) => setQuestionValue(e.target.value)}
+                type="number"
+                value={maxChoice}
+                onChange={(e) => setMaxChoice(parseInt(e.target.value))}
                 style={{ width: '100%', marginTop: '8px' }}
                 placeholder="Enter number of choice allowed here"
               />
             </div>
           </div>
         )}
-        {type === 'Dropdown' && (
+        {type.value === 'Dropdown' && (
           <div className="drop-down-container">
             <ChoiceField
               updateChoiceField={updateChoiceField}
-              values={choices}
+              choices={choices}
             />
           </div>
         )}
-        {type === 'Yes/No' && (
+        {type.value === 'YesNo' && (
           <div className="yes-no-container">
             <Checkbox style={{ paddingTop: '10px' }}>
               Enable &quot;other&quot; option
@@ -139,10 +167,7 @@ function Question() {
         )}
 
         <div className="flex-container footer-container">
-          <div
-            className="flex-container"
-            // onClick={() => handleDelete(displayQuestion.id)}
-          >
+          <div className="flex-container" onClick={handleDelete}>
             <CloseOutlined style={{ color: '#a80000' }} />
             <Text style={{ color: '#a80000', marginLeft: '12px' }} strong>
               Delete question
